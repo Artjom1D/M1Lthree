@@ -38,5 +38,19 @@ def ban_link(message):
         bot.ban_chat_member(chat_id, user_id)
         bot.reply_to(message, f"Пользователь @{message.reply_to_message.from_user.username} был забанен за ссылку.")
 
+@bot.message_handler(commands=['uprank'])
+def uprank_user(message):
+    if message.reply_to_message:
+        chat_id = message.chat.id
+        user_id = message.reply_to_message.from_user.id
+        user_status = bot.get_chat_member(chat_id, user_id).status
+
+        if user_status == 'administrator' or user_status == 'creator':
+            bot.reply_to(message, "Невозможно повысить администратора.")
+        else:
+            bot.promote_chat_member(chat_id, user_id, can_change_info=True, can_post_messages=True, can_edit_messages=True, can_delete_messages=True, can_invite_users=True, can_restrict_members=True, can_pin_messages=True, can_promote_members=False)
+            bot.reply_to(message, f"Пользователь @{message.reply_to_message.from_user.username} был повышен.")
+    else:
+        bot.reply_to(message, "Эта команда должна быть использована в ответ на сообщение пользователя.")
 
 bot.infinity_polling(none_stop=True)
